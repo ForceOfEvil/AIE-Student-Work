@@ -1,0 +1,27 @@
+﻿Build started 9/24/2013 1:40:24 PM.
+     1>Project "F:\AIE\PongInvaders\PongInvaders.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "obj\PongInvaders.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I./ /I./include/ /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"obj\\" /Fd"obj\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt source\Functions.cpp
+         Functions.cpp
+     1>f:\aie\ponginvaders\source\functions.cpp(96): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>f:\aie\ponginvaders\source\functions.cpp(96): warning C4305: 'initializing' : truncation from 'double' to 'float'
+     1>f:\aie\ponginvaders\source\functions.cpp(195): warning C4244: 'initializing' : conversion from 'int' to 'float', possible loss of data
+     1>f:\aie\ponginvaders\source\functions.cpp(398): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>f:\aie\ponginvaders\source\functions.cpp(399): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+     1>f:\aie\ponginvaders\source\functions.cpp(402): warning C4305: '=' : truncation from 'double' to 'float'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"bin\PongInvaders_d.exe" /INCREMENTAL /NOLOGO /LIBPATH:./libs AIE_GL_Static_Framework_d.lib kernel32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"obj\PongInvaders_d.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"bin\PongInvaders_d.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"bin\PongInvaders_d.lib" /MACHINE:X86 obj\Functions.obj
+         obj\main.obj
+         PongInvaders.vcxproj -> F:\AIE\PongInvaders\bin\PongInvaders_d.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"F:\AIE\PongInvaders\bin\PongInvaders_d.exe.manifest" /manifest obj\PongInvaders_d.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "obj\PongInvaders.unsuccessfulbuild".
+         Touching "obj\PongInvaders.lastbuildstate".
+     1>Done Building Project "F:\AIE\PongInvaders\PongInvaders.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.98
