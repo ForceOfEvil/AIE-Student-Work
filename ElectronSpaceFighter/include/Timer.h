@@ -13,17 +13,17 @@ class oTimer
 {
 public:
 	oTimer();
-	void a_Start(unsigned long ulRunTime);
-	bool a_bStop();
-	void a_Reset();
-	unsigned long a_ulGetTime();
-	void a_Running();
+	void Start(unsigned long a_ulEndTime);
+	bool Stop();
+	void Reset();
+	unsigned long GetTime();
+	void Running();
 	~oTimer();
 
 private:
-	bool bRunning;
-	unsigned long ulTime;
-	unsigned long ulEndTime;
+	bool m_bRunning;
+	unsigned long m_ulTime;
+	unsigned long m_ulEndTime;
 };
 
 

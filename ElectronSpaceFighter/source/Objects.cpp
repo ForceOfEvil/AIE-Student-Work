@@ -1,78 +1,205 @@
+//////////////////////////////////////////////////////////////////////////
+//		@file				Objects.cpp
+//		@details			Objects class implementation
+//		@author				Derek Potter
+//		@version			1.0
+//		@date last edited	10/30/2013
+//////////////////////////////////////////////////////////////////////////
 #include "Objects.h"
 #include "AIE.h"
 #include <cstring>
 
 int iKillPosition = -10;
+const int ciSCREEN_X = 1280;
+const int ciSCREEN_Y = 780;
 
+//Screen collision test returns
+const int ciLeftCollision = 1;
+const int ciRightCollision = 2;
+const int ciTopCollision = 3;
+const int ciBottomCollision = 4;
+
+
+//////////////////////////////////////////////////////////////////////////
+//		The constructor, blank because more options are needed to inisialise objects
+//////////////////////////////////////////////////////////////////////////
 oObjects::oObjects(){
+	//Frogs
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Sets up objects
+//////////////////////////////////////////////////////////////////////////
+void oObjects::Inisialize(unsigned int a_uiSprite, float a_fStartPosX, float a_fStartPosY, int a_iWidth, int a_iHeight, bool a_bAlive){
+
+	m_iWidth = a_iWidth;
+	m_iHeight= a_iHeight;
+	pPosition.SetVector(a_fStartPosX, a_fStartPosY);
+	pSpeed.SetVector(0,0);
+	m_uiSprite = a_uiSprite;
+	m_bAlive = a_bAlive;
+	m_iScore = 0;
 
 }
 
-void oObjects::a_Update(){
+//////////////////////////////////////////////////////////////////////////
+//		moves an object, draws an object, and tests if it has collided with the screen and kills it
+//////////////////////////////////////////////////////////////////////////
+void oObjects::Draw(bool a_bIsPlayer, bool a_bIsStar){
 
-	pPosition.a_VectorAdd(pPosition, pSpeed);
+	if(m_bAlive){
+	pPosition += pSpeed;
+	MoveSprite(m_uiSprite, pPosition.GetVectorX(), pPosition.GetVectorY());
+	DrawSprite(m_uiSprite);
 
+	if(TestScreenCollision() == ciBottomCollision && a_bIsStar)
+		Kill();
 
-}
-
-void oObjects::a_Inisialize(unsigned int uiSetSprite, int iStartPosX, int iStartPosY, int iWide, int iTall){
-
-	iWidth = iWide;
-	iHeight= iTall;
-	pPosition.a_SetVector(iStartPosX, iStartPosY);
-	uiSprite = uiSetSprite;
-	bAlive = 0;
-
-}
-
-void oObjects::a_Draw(){
-
-	DrawSprite(uiSprite);
+	else if(TestScreenCollision() != 0 && !a_bIsPlayer && !a_bIsStar)
+		Kill();
+	}
 
 }
 
-void oObjects::a_SetSprite(unsigned int uiNewSprite){
+//////////////////////////////////////////////////////////////////////////
+//		Sets the sprite
+//////////////////////////////////////////////////////////////////////////
+void oObjects::SetSprite(unsigned int a_uiSprite){
 
-	uiSprite = uiNewSprite;
-
-}
-
-void oObjects::a_SetDimensions(int iX, int iY){
-
-	iHeight = iX;
-	iWidth = iY;
+	m_uiSprite = a_uiSprite;
 
 }
 
-void oObjects::a_SetMovement(teMovementPatterns & rempMove){
-
-	empMove = rempMove;
-
-}
-
-teMovementPatterns oObjects::a_GetMovement(){
-
-	return empMove;
+//////////////////////////////////////////////////////////////////////////
+//		Returns the current sprite
+//////////////////////////////////////////////////////////////////////////
+unsigned int oObjects::GetSprite(){
+	
+	return m_uiSprite;
 
 }
 
-void oObjects::a_Kill(){
+//////////////////////////////////////////////////////////////////////////
+//		Returns the objects alive satus
+//////////////////////////////////////////////////////////////////////////
+bool oObjects::GetAlive(){
 
-	bAlive = false;
-	pPosition.a_SetVector(iKillPosition, iKillPosition);
-	pSpeed.a_SetVector(0,0);
-
-}
-
-void oObjects::a_Create(float fPosX, float fPosY, float fSpeedX, float fSpeedY, unsigned int uiNewSprite){
-
-	bAlive = true;
-	pPosition.a_SetVector(fPosX, fPosY);
-	pSpeed.a_SetVector(fSpeedX, fSpeedY);
-	a_SetSprite(uiNewSprite);
+	return m_bAlive;
 
 }
 
+//////////////////////////////////////////////////////////////////////////
+//		increases the score
+//////////////////////////////////////////////////////////////////////////
+void oObjects::IncreaseScore(){
+
+	m_iScore++;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		returns the score
+//////////////////////////////////////////////////////////////////////////
+int oObjects::GetScore(){
+
+	return m_iScore;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Sets an objects height and width
+//////////////////////////////////////////////////////////////////////////
+void oObjects::SetDimensions(int a_iWidth, int a_iHeight){
+
+	m_iWidth = a_iWidth;
+	m_iHeight = a_iHeight;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Returns the width
+//////////////////////////////////////////////////////////////////////////
+int oObjects::GetWidth(){
+
+	return m_iWidth;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Returns the height
+//////////////////////////////////////////////////////////////////////////
+int oObjects::GetHeight(){
+
+	return m_iHeight;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Checks screen collision, and returns where its colliding with the screen
+//////////////////////////////////////////////////////////////////////////
+int oObjects::TestScreenCollision(){
+
+	// 1 is left, 2 is right, 3 is up, 4 bottom
+	if((pPosition.GetVectorX() - (m_iWidth / 2) ) < 0)
+		return ciLeftCollision;
+	if((pPosition.GetVectorX() + (m_iWidth / 2)) > ciSCREEN_X)
+		return ciRightCollision;
+	if((pPosition.GetVectorY() - (m_iHeight / 2)) < 0)
+		return ciTopCollision;
+	if((pPosition.GetVectorY() + (m_iHeight / 2)) > (ciSCREEN_Y))
+		return ciBottomCollision;
+	
+	return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Tests the collision between two objects
+//////////////////////////////////////////////////////////////////////////
+bool oObjects::TestCollision(oObjects & rpObj){
+	
+	if(pPosition.GetVectorX() + GetWidth() / 2 > rpObj.pPosition.GetVectorX() - rpObj.GetWidth() / 2)
+
+	if(pPosition.GetVectorX() - GetWidth() / 2 < rpObj.pPosition.GetVectorX() + rpObj.GetWidth() / 2)
+
+	if(pPosition.GetVectorY() + GetHeight() / 2 > rpObj.pPosition.GetVectorY() - rpObj.GetHeight() / 2)
+
+	if(pPosition.GetVectorY() - GetHeight() / 2 < rpObj.pPosition.GetVectorY() + rpObj.GetHeight() / 2)
+		return true;
+
+	return false;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Kills an objects and moves it off screen
+//////////////////////////////////////////////////////////////////////////
+void oObjects::Kill(){
+
+	m_bAlive = false;
+	pPosition.SetVector(iKillPosition, iKillPosition);
+	pSpeed.SetVector(0,0);
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Fully creates an object
+//////////////////////////////////////////////////////////////////////////
+void oObjects::Create(unsigned int a_uiSprite, float a_fPosX, float a_fPosY, float a_fSpeedX, float a_fSpeedY, int a_iWidth, int a_iHeight, unsigned long a_ulFireRate){
+
+	m_bAlive = true;
+	m_iWidth = a_iWidth;
+	m_iHeight = a_iHeight;
+	pPosition.SetVector(a_fPosX, a_fPosY);
+	pSpeed.SetVector(a_fSpeedX, a_fSpeedY);
+	ptFireRate.Start(a_ulFireRate);
+	SetSprite(a_uiSprite);
+	m_iScore = 0;
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Destructor
+//////////////////////////////////////////////////////////////////////////
 oObjects::~oObjects(){
-
+	//Science!
 }

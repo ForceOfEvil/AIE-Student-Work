@@ -3,289 +3,260 @@
 //		@details			The functions implementations
 //		@author				Derek Potter
 //		@version			1.0
-//		@date last edited	10/8/2013
+//		@date last edited	10/30/2013
 //////////////////////////////////////////////////////////////////////////
 
 #include "AIE.h"
 #include "Functions.h"
-#include "Vector2D.h"
-#include "Timer.h"
-#include "Objects.h"
-#include "Ships.h"
+#include "Globals.h"
+#include "OtherGlobals.h"
 #include <math.h>
 #include <iostream>
 
-const int ciSCREEN_X = 1280;
-const int ciSCREEN_Y = 780;
-
-//Screen collision test returns
-const int ciLeftCollision = 1;
-const int ciRightCollision = 2;
-const int ciTopCollision = 3;
-const int ciBottomCollision = 4;
-
-//star stuff
-const int ciStarArraySize = 50;
-const int ciStarStart = -10;
-const int ciStarYSpread = 1000;
-const float cfStarSpeed = .5;
-const int ciSmallStarDimensions = 3;
-const int ciMediumStarDimensions = 4;
-const int ciLargeStarDimensions = 5;
-
-//Player stuff
-const float cfPlayerSpeed = 2;
-const int ciPlayerHeight = 50;
-const int ciPlayerWidth = 50;
-const int ciPlayerStartY = 700;
-const int ciPlayerFirePositions[8] = {15,-10, -15,-10, 0,0, 0,0};
-unsigned long ulPlayerFireRate[5] = {30, 30, 30, 30, 30};
-
-//Enemy stuff
-const int ciEnemySartPosition = -200;
-const float cfSmallEnemyBasicSpeed = 3;
-const float cfMediumEnemyBasicSpeed = 2;
-const float cfLargeEnemyBasicSpeed = 1;
-const int ciSmallEnemyDimensions = 20;
-const int ciMediumEnemyDimensions = 50;
-const int ciLargeEnemyDimensions = 70;
-
-//bullet stuff
-const float cfBulletSpeed = .6;
-const int ciBulletDimensions = 10;
-int iBulletReminder[20];
-
-//array sizes ( /5 for player bullets)
-const int ciArraySize = 500;
-const int ciEnemyNumbers = 20;
-
-// Timers and const for timers
-oTimer ptLevelTimer;
-oTimer ptSmallEnemySpawn;
-oTimer ptSineTimer;
-const unsigned long culSineTimerEnd = 62;
-oTimer ptRadialFireTimer;
-const unsigned long culRadialTimerEnd = 360;
-
-//Other constants
-const int ciNOne = -1;
+//////////////////////////////////////////////////////////////////////////
+//		The games state switch
+//////////////////////////////////////////////////////////////////////////
+void (*GameState)();
 
 //////////////////////////////////////////////////////////////////////////
-//		Initializing all the objects and their settings, and game global variables
+//		Sets a_GameStae to the menu, and runs the initializer (needed so restart works correctally)
 //////////////////////////////////////////////////////////////////////////
-char * rcPlayerShip = "./images/Ship.png";
-char * rcEnemyShips = "./images/EnemyShip.png";
-char * rcStar = "./images/Star.png";
-char * rcBacground = "./images/Background.png";
-char * rcMenu = "./images/Menu.png";
-char * rcLevelOne = "./images/LevelOne.png";
+void StartGame(){
 
-//player ship (contains an oObjects, oVectors, and oTimers)
-oShips psPlayerOne;
+	GameState = &Menu;
 
-//star array objects
-oObjects poSmallStar[ciStarArraySize];
-oObjects poMediumStar[ciStarArraySize];
-oObjects poLargeStar[ciStarArraySize];
+	//player creation
+	pPlayer.Create(CreateSprite(rcPlayerShip, ciPlayerWidth, ciPlayerHeight), ciSCREEN_X>>1, ciPlayerStartY, 0,0, ciPlayerWidth, ciPlayerHeight, ulPlayerFireRate);
 
-//bullet array objects
-oObjects poEnemyBullets[ciArraySize];
-oObjects poPlayerBullets[ciArraySize/5];
-
-//enemy array ships (contains an oObjects, oVectors, and oTimers)
-oShips psSmallEnemies[ciEnemyNumbers];
-oShips psMediumEnemies[ciEnemyNumbers];
-oShips psLargeEnemies[ciEnemyNumbers];
-
-//The games state switch
-void (*a_GameState)();
-
-
-//////////////////////////////////////////////////////////////////////////
-//		Sets up the main variables
-//////////////////////////////////////////////////////////////////////////
-void a_Initializer(){
-
-	a_GameState = &a_Menu;
-
-	//player stuff
-	// is dead is true when it is dead
-	psPlayerOne.a_Inisialize(CreateSprite(rcPlayerShip, ciPlayerWidth, ciPlayerHeight), ciPlayerWidth, ciPlayerHeight, , false);
-	ciSCREEN_X>>1, ciPlayerStartY, rcPlayerShip, ciPlayerWidth, ciPlayerHeight
-	psPlayerOne.poData.pPosition.a_SetVector(ciSCREEN_X>>1, ciPlayerStartY);
-	psPlayerOne.poData.pSpeed.a_SetVector(0,0);
-	psPlayerOne.pvFirePositionOne.a_SetVector(ciPlayerFirePositions[0], ciPlayerFirePositions[1]);
-	psPlayerOne.pvFirePositionTwo.a_SetVector(ciPlayerFirePositions[2], ciPlayerFirePositions[3]);
-	psPlayerOne.pvFirePositionThree.a_SetVector(ciPlayerFirePositions[4], ciPlayerFirePositions[5]);
-	psPlayerOne.pvFirePositionFour.a_SetVector(ciPlayerFirePositions[6], ciPlayerFirePositions[7]);
-	psPlayerOne.bCenterFire = false;
-	psPlayerOne.ptFireRateCenter.a_Start(ulPlayerFireRate[0]); 
-	psPlayerOne.ptFireRateOne.a_Start(ulPlayerFireRate[1]); 
-	psPlayerOne.ptFireRateTwo.a_Start(ulPlayerFireRate[2]);
-	psPlayerOne.ptFireRateThree.a_Start(ulPlayerFireRate[3]);
-	psPlayerOne.ptFireRateFour.a_Start(ulPlayerFireRate[4]); 
-	psPlayerOne.poData.iSprite = CreateSprite( "./images/Ship.png", psPlayerOne.poData.iWidth, psPlayerOne.poData.iHeight, true);
-	
 	//EnemySetUp
 	for(int i = 0; i < ciEnemyNumbers; i++){
 
 		//Small Enemies (Fodder enemies)
-		psSmallEnemies[i].poData.bIsDead = 1;
-		psSmallEnemies[i].poData.iHeight = ciSmallEnemyDimensions;
-		psSmallEnemies[i].poData.iWidth = ciSmallEnemyDimensions;
-		psSmallEnemies[i].poData.iSprite = CreateSprite( "./images/EnemyShip.png", psSmallEnemies[i].poData.iWidth, psSmallEnemies[i].poData.iHeight);
-		psSmallEnemies[i].poData.pPosition.a_SetVector(ciEnemySartPosition,ciEnemySartPosition);
-		psSmallEnemies[i].poData.pSpeed.a_SetVector(0,0);
-		psSmallEnemies[i].pvStartPosition.a_SetVector(0,0);
-		psSmallEnemies[i].bCenterFire = 0;
+		poSmallEnemies[i].Inisialize(CreateSprite(rcEnemyShips, ciSmallEnemyDimensions, ciSmallEnemyDimensions, true), ciSmallEnemyDimensions, 
+										ciSmallEnemyDimensions, ciStartPos, ciStartPos, false);
+
+		//The time before the enemies sart to fire
+		poSmallEnemies[i].ptTimeToFire.Start(ulEnemyFireRate);
 
 		//Medium Enemies (Attack Enemies)
-		psMediumEnemies[i].poData.bIsDead = 1;
-		psMediumEnemies[i].poData.iHeight = ciMediumEnemyDimensions;
-		psMediumEnemies[i].poData.iWidth = ciMediumEnemyDimensions;
-		psMediumEnemies[i].poData.iSprite = CreateSprite( "./images/EnemyShip.png", psMediumEnemies[i].poData.iWidth, psMediumEnemies[i].poData.iHeight);
-		psMediumEnemies[i].poData.pPosition.a_SetVector(ciEnemySartPosition,ciEnemySartPosition);
-		psMediumEnemies[i].poData.pSpeed.a_SetVector(0,0);
-		psMediumEnemies[i].pvStartPosition.a_SetVector(0,0);
-		psMediumEnemies[i].bCenterFire = 0;
+		poMediumEnemies[i].Inisialize(CreateSprite(rcEnemyShips, ciMediumEnemyDimensions, ciMediumEnemyDimensions, true), ciMediumEnemyDimensions, 
+										ciMediumEnemyDimensions, ciStartPos, ciStartPos, false);
 
 		//Large Enemies (Destroyer enemies)
-		psLargeEnemies[i].poData.bIsDead = 1;
-		psLargeEnemies[i].poData.iHeight = ciLargeEnemyDimensions;
-		psLargeEnemies[i].poData.iWidth = ciLargeEnemyDimensions;
-		psLargeEnemies[i].poData.iSprite = CreateSprite( "./images/EnemyShip.png", psLargeEnemies[i].poData.iWidth, psLargeEnemies[i].poData.iHeight);
-		psLargeEnemies[i].poData.pPosition.a_SetVector(ciEnemySartPosition,ciEnemySartPosition);
-		psLargeEnemies[i].poData.pSpeed.a_SetVector(0,0);
-		psLargeEnemies[i].pvStartPosition.a_SetVector(0,0);
-		psLargeEnemies[i].bCenterFire = 0;
+		poLargeEnemies[i].Inisialize(CreateSprite(rcEnemyShips, ciLargeEnemyDimensions, ciLargeEnemyDimensions, true), ciLargeEnemyDimensions, 
+										ciLargeEnemyDimensions, ciStartPos, ciStartPos, false);
 
 	}
 
 	//bullet initialising
 	for(int i = 0; i < ciArraySize; i++){
 
-		uiBulletSpriteOne = CreateSprite("./images/Star.png", ciBulletDimensions, ciBulletDimensions, true);
-		poEnemyBullets[i].bIsDead = 1;
-		poEnemyBullets[i].iHeight = ciBulletDimensions;
-		poEnemyBullets[i].iWidth = ciBulletDimensions;
-		poEnemyBullets[i].iSprite = uiBulletSpriteOne;
-		poEnemyBullets[i].pSpeed.a_SetVector(0,0);
+		poEnemyBullets[i].Inisialize(CreateSprite(rcStar, ciBulletDimensions, ciBulletDimensions, true), ciStartPos, ciStartPos, ciBulletDimensions,
+										ciBulletDimensions, false);
 
-		uiBulletSpriteOne = CreateSprite("./images/Star.png", ciBulletDimensions, ciBulletDimensions, true);
-		poPlayerBullets[i/5].bIsDead = 1;
-		poPlayerBullets[i/5].iHeight = ciBulletDimensions;
-		poPlayerBullets[i/5].iWidth = ciBulletDimensions;
-		poPlayerBullets[i/5].iSprite = uiBulletSpriteOne;
-		poPlayerBullets[i/5].pSpeed.a_SetVector(0,0);
+		poPlayerBullets[i].Inisialize(CreateSprite(rcStar, ciBulletDimensions, ciBulletDimensions, true), ciStartPos, ciStartPos, ciBulletDimensions,
+										ciBulletDimensions, false);
 	}
 
 	//setting up the stars
 	for(int i = 0; i < ciStarArraySize; i++){
 
-		poSmallStar[i].iHeight = ciSmallStarDimensions;
-		poSmallStar[i].iWidth = ciSmallStarDimensions;
-		poSmallStar[i].pSpeed.a_SetVector(0,0);
-		poSmallStar[i].pPosition.a_SetVector(ciStarStart, ciStarStart);
-		poSmallStar[i].iSprite = CreateSprite( "./images/Star.png", poSmallStar[i].iWidth, poSmallStar[i].iHeight, true);
+		poSmallStar[i].Inisialize(CreateSprite(rcStar, ciSmallStarDimensions, ciSmallStarDimensions, true), ciStartPos, ciStartPos, ciSmallStarDimensions,
+									ciSmallStarDimensions, false);
 
-		poMediumStar[i].iHeight = ciMediumStarDimensions;
-		poMediumStar[i].iWidth = ciMediumStarDimensions;
-		poMediumStar[i].pSpeed.a_SetVector(0,0);
-		poMediumStar[i].pPosition.a_SetVector(ciStarStart, ciStarStart);
-		poMediumStar[i].iSprite = CreateSprite( "./images/Star.png", poMediumStar[i].iWidth, poMediumStar[i].iHeight, true);
+		poMediumStar[i].Inisialize(CreateSprite(rcStar, ciMediumStarDimensions, ciMediumStarDimensions, true), ciStartPos, ciStartPos, ciMediumStarDimensions,
+									ciMediumStarDimensions, false);
 
-		poLargeStar[i].iHeight = ciLargeStarDimensions;
-		poLargeStar[i].iWidth = ciLargeStarDimensions;
-		poLargeStar[i].pSpeed.a_SetVector(0,0);
-		poLargeStar[i].pPosition.a_SetVector(ciStarStart, ciStarStart);
-		poLargeStar[i].iSprite = CreateSprite( "./images/Star.png", poLargeStar[i].iWidth, poLargeStar[i].iHeight, true);
+		poLargeStar[i].Inisialize(CreateSprite(rcStar, ciLargeStarDimensions, ciLargeStarDimensions, true), ciStartPos, ciStartPos, ciLargeStarDimensions,
+									ciLargeStarDimensions, false);
 
 
 	}
 	
-	ptSineTimer.a_Start(culSineTimerEnd);
+	//The spawn timer
+	ptSmallEnemySpawn.Start(20);
 
 	//creating the rest of the sprites
-	MoveSprite(uiBackgroundImage, ciSCREEN_X>>1, ciSCREEN_Y>>1);
-	MoveSprite(uiMenuImage, ciSCREEN_X>>1, ciSCREEN_Y>>1);
-	MoveSprite(uiLevelBackground, ciSCREEN_X>>1, ciSCREEN_Y>>1);
-	DrawSprite(uiBackgroundImage);
+
+	uiMenu = CreateSprite(rcMenu, ciSCREEN_X>>1, ciSCREEN_Y>>1, true);
+
+	poBackground.Inisialize(CreateSprite(rcBackground, ciSCREEN_X, ciSCREEN_Y, true), ciSCREEN_X>>1, ciSCREEN_Y>>1, ciSCREEN_X, ciSCREEN_Y, true);
+	poMenu.Inisialize(uiMenu, ciSCREEN_X>>1, ciSCREEN_Y>>1, ciSCREEN_X>>1, ciSCREEN_Y>>1, true);
+	poMenu.Draw(false, false);
+	poLevel.Inisialize(CreateSprite(rcLevelOne, ciSCREEN_X, ciSCREEN_Y, true), ciSCREEN_X>>1, ciSCREEN_Y>>1, ciSCREEN_X, ciSCREEN_Y, true);
+	poLevel.Draw(false, false);
+
+	uiControls = CreateSprite(rcControls, ciSCREEN_X>>1, ciSCREEN_Y>>1, true);
+	uiGameOver = CreateSprite(rcGameOver, ciSCREEN_X>>1, ciSCREEN_Y>>1, true); 
+	uiGameMenu = CreateSprite(rcGameMenu, ciSCREEN_X>>1, ciSCREEN_Y>>1, true);
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Sets up the main variables
+//////////////////////////////////////////////////////////////////////////
+void Restarter(){
+
+	//player creation
+	pPlayer.Create(pPlayer.GetSprite(), ciSCREEN_X>>1, ciPlayerStartY, 0,0, ciPlayerWidth, ciPlayerHeight, ulPlayerFireRate);
+
+	//EnemySetUp
+	for(int i = 0; i < ciEnemyNumbers; i++){
+
+		//Small Enemies (Fodder enemies)
+		poSmallEnemies[i].Inisialize(poSmallEnemies[i].GetSprite(), ciSmallEnemyDimensions, 
+										ciSmallEnemyDimensions, ciStartPos, ciStartPos, false);
+
+		//poSmallEnemies[i].ptFireRate.a_Start(ulPlayerFireRate);
+		poSmallEnemies[i].ptTimeToFire.Start(ulEnemyFireRate);
+
+		//Medium Enemies (Attack Enemies)
+		poMediumEnemies[i].Inisialize(poMediumEnemies[i].GetSprite(), ciMediumEnemyDimensions, 
+										ciMediumEnemyDimensions, ciStartPos, ciStartPos, false);
+
+		//Large Enemies (Destroyer enemies)
+		poLargeEnemies[i].Inisialize(poLargeEnemies[i].GetSprite(), ciLargeEnemyDimensions, 
+										ciLargeEnemyDimensions, ciStartPos, ciStartPos, false);
+
+	}
+
+	//bullet initialising
+	for(int i = 0; i < ciArraySize; i++){
+
+		poEnemyBullets[i].Inisialize(poEnemyBullets[i].GetSprite(), ciStartPos, ciStartPos, ciBulletDimensions,
+										ciBulletDimensions, false);
+
+		poPlayerBullets[i].Inisialize(poPlayerBullets[i].GetSprite(), ciStartPos, ciStartPos, ciBulletDimensions,
+										ciBulletDimensions, false);
+	}
+
+	//setting up the stars
+	for(int i = 0; i < ciStarArraySize; i++){
+
+		poSmallStar[i].Inisialize(poSmallStar[i].GetSprite(), ciStartPos, ciStartPos, ciSmallStarDimensions,
+									ciSmallStarDimensions, false);
+
+		poMediumStar[i].Inisialize(poMediumStar[i].GetSprite(), ciStartPos, ciStartPos, ciMediumStarDimensions,
+									ciMediumStarDimensions, false);
+
+		poLargeStar[i].Inisialize(poLargeStar[i].GetSprite(), ciStartPos, ciStartPos, ciLargeStarDimensions,
+									ciLargeStarDimensions, false);
+
+
+	}
+	
+	//reseting the spawn timer
+	ptSmallEnemySpawn.Reset();
+
+
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		The Menu
 //////////////////////////////////////////////////////////////////////////
-void a_Menu(){
+void Menu(){
 
-	a_DrawGame();
+	//drawing the background, level background, and menu
+	poBackground.Draw(false, false);
+	poLevel.Draw(false, false);
+	poMenu.Draw(false, false);
 
-	//DrawSprite(uiBackgroundImage);
-	DrawSprite(uiMenuImage);
+	//starts/resumes the game
+	if(IsKeyDown(KEY_ENTER) && poMenu.GetSprite() != uiControls && poMenu.GetSprite() != uiGameOver){
 
-	if(IsKeyDown(KEY_ENTER))
-		a_GameState = &a_UpDateGame;
+		GameState = &UpDateGame;
+		poMenu.SetSprite(uiGameMenu);
 
-	if(IsKeyDown(KEY_BACKSPACE))
-		a_GameState = &a_UpDateGame;
-
-	if(IsKeyDown(KEY_ESC)){
-		Shutdown();
-		exit(1);
 	}
 
+	//restarts th game
+	if(IsKeyDown(KEY_BACKSPACE) && poMenu.GetSprite() != uiControls && poMenu.GetSprite() != uiMenu){
 
+		Restarter();
+		GameState = &UpDateGame;
 
+		if(poMenu.GetSprite() == uiGameOver)
+			poMenu.SetSprite(uiGameMenu);
+
+	}
+
+	//goes to the controls screen from the games main menu
+	if(IsKeyDown(KEY_LSHIFT) && poMenu.GetSprite() == uiMenu){
+		poMenu.SetSprite(uiControls);
+	}
+
+	//goes from the controls back to the main menu
+	if(IsKeyDown(KEY_LCTRL) && poMenu.GetSprite() == uiControls){
+		poMenu.SetSprite(uiMenu);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Runs the a_GameState which controls the games state
 //////////////////////////////////////////////////////////////////////////
-void a_GameRunner(){
+void GameRunner(){
 
-	a_GameState();
+		//shuts down the game
+	if(IsKeyDown(KEY_ESC)){
+		Shutdown();
+		exit(1);
+	}
+
+	GameState();
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Moves the player
 //////////////////////////////////////////////////////////////////////////
-void a_MovePlayer(){
+void MovePlayer(){
 
+			pPlayer.ptFireRate.Running();
+	
+	//Goes to the menu
 	if(IsKeyDown(KEY_RSHIFT))
-		a_GameState = &a_Menu;
+		GameState = &Menu;
 
+	//or moves the player
 	else{
 
-		if(IsKeyDown(KEY_LEFT) && a_iTestScreenCollision(psPlayerOne.poData) != ciLeftCollision && !IsKeyDown(KEY_RIGHT)){
+		//Moves the player left
+		if(IsKeyDown(KEY_LEFT) && pPlayer.TestScreenCollision(ciLeftCollision) && !IsKeyDown(KEY_RIGHT)){
 
-			psPlayerOne.poData.pSpeed.a_SetVector(cfPlayerSpeed *  ciNOne, psPlayerOne.poData.pSpeed.a_fGetVectorY());
+			pPlayer.pSpeed.SetVector(cfPlayerSpeed * ciNOne, pPlayer.pSpeed.GetVectorY());
 
 		}
+		
+		//Moves the player right
+		else if(IsKeyDown(KEY_RIGHT) && !pPlayer.TestScreenCollision(ciRightCollision) && !IsKeyDown(KEY_LEFT)){
 
-		else if(IsKeyDown(KEY_RIGHT) && a_iTestScreenCollision(psPlayerOne.poData) != ciRightCollision && !IsKeyDown(KEY_LEFT)){
-
-			psPlayerOne.poData.pSpeed.a_SetVector(cfPlayerSpeed, psPlayerOne.poData.pSpeed.a_fGetVectorY());
+			pPlayer.pSpeed.SetVector(cfPlayerSpeed, pPlayer.pSpeed.GetVectorY());
 		}
+
+		//stops the player moving right or left if not moving left or right
 		else
-			psPlayerOne.poData.pSpeed.a_SetVector(0, psPlayerOne.poData.pSpeed.a_fGetVectorY());
+			pPlayer.pSpeed.SetVector(0, pPlayer.pSpeed.GetVectorY());
 
+		//moves the player up
+		if(IsKeyDown(KEY_UP) && pPlayer.TestScreenCollision(ciTopCollision) && !IsKeyDown(KEY_DOWN)){
 
-		if(IsKeyDown(KEY_UP) && a_iTestScreenCollision(psPlayerOne.poData) != ciTopCollision && !((psPlayerOne.poData.pPosition.a_fGetVectorY() - psPlayerOne.poData.iHeight / 2) < 0) && !IsKeyDown(KEY_DOWN)){
-
-			psPlayerOne.poData.pSpeed.a_SetVector(psPlayerOne.poData.pSpeed.a_fGetVectorX(), cfPlayerSpeed * ciNOne);
+			pPlayer.pSpeed.SetVector(pPlayer.pSpeed.GetVectorX(), cfPlayerSpeed * ciNOne);
 		}
 
-		else if(IsKeyDown(KEY_DOWN) && a_iTestScreenCollision(psPlayerOne.poData) != ciBottomCollision && !((psPlayerOne.poData.pPosition.a_fGetVectorY() + psPlayerOne.poData.iHeight / 2) > ciSCREEN_Y) && !IsKeyDown(KEY_UP)){
+		//moves the player down
+		else if(IsKeyDown(KEY_DOWN) && !pPlayer.TestScreenCollision(ciBottomCollision) && !IsKeyDown(KEY_UP)){
 
-			psPlayerOne.poData.pSpeed.a_SetVector(psPlayerOne.poData.pSpeed.a_fGetVectorX(), cfPlayerSpeed);
+			pPlayer.pSpeed.SetVector(pPlayer.pSpeed.GetVectorX(), cfPlayerSpeed);
 		}
 
+		//stops the player from moving up or down if not moving up or down
 		else
-			psPlayerOne.poData.pSpeed.a_SetVector(psPlayerOne.poData.pSpeed.a_fGetVectorX(), 0);
+			pPlayer.pSpeed.SetVector(pPlayer.pSpeed.GetVectorX(), 0);
 
-		if(IsKeyDown(KEY_SPACE) && (psPlayerOne.ptFireRateCenter.a_bStop() || psPlayerOne.ptFireRateOne.a_bStop() || 
-			psPlayerOne.ptFireRateTwo.a_bStop() || psPlayerOne.ptFireRateThree.a_bStop() || psPlayerOne.ptFireRateFour.a_bStop())){
-			a_FireBullet(psPlayerOne, psPlayerOne.pvFirePositionOne, psPlayerOne.pvFirePositionTwo, psPlayerOne.pvFirePositionThree, psPlayerOne.pvFirePositionFour, true);
+		//Fires the bullets
+		if(IsKeyDown(KEY_SPACE) && pPlayer.ptFireRate.Stop()){
+
+			pPlayer.TestScreenCollision(ciLeftCollision);//FireBullet(poPlayerOne, true);
+
 		}
 
 	}
@@ -295,283 +266,247 @@ void a_MovePlayer(){
 //////////////////////////////////////////////////////////////////////////
 //		Moves the Stars
 //////////////////////////////////////////////////////////////////////////
-void a_StarMover(){
+void StarMover(){
 
 	for(int i = 0; i < ciStarArraySize; i++){
 
-		if(poSmallStar[i].pSpeed.a_fGetVectorY() == 0){
+		//if the stars are not moving, put them in a random position above the screen, and make them move down
+		if(poSmallStar[i].pSpeed.GetVectorY() == 0){
 
-			poSmallStar[i].pPosition.a_SetVector(rand()% ciSCREEN_X , ciStarStart - rand() % ciStarYSpread);
-			poSmallStar[i].pSpeed.a_SetVector(0, cfStarSpeed);
-
-		}
-		
-		if(a_iTestScreenCollision(poSmallStar[i]) == ciBottomCollision){
-
-			poSmallStar[i].pPosition.a_SetVector(poSmallStar[i].pPosition.a_fGetVectorX(), ciStarStart);
-			poSmallStar[i].pSpeed.a_SetVector(0,0);
+			poSmallStar[i].Create(poSmallStar[i].GetSprite(), rand()% ciSCREEN_X , ciStartPos - rand() % ciStarYSpread, 0, cfStarSpeed, ciSmallStarDimensions, ciSmallStarDimensions, 0);
 
 		}
 		
-		if(poMediumStar[i].pSpeed.a_fGetVectorY() == 0){
+		if(poMediumStar[i].pSpeed.GetVectorY() == 0){
 
-			poMediumStar[i].pPosition.a_SetVector(rand()% ciSCREEN_X , ciStarStart - rand() % ciStarYSpread);
-			poMediumStar[i].pSpeed.a_SetVector(0, cfStarSpeed * 2);
-
-		}
-		
-		if(a_iTestScreenCollision(poMediumStar[i]) == ciBottomCollision){
-
-			poMediumStar[i].pPosition.a_SetVector(poMediumStar[i].pPosition.a_fGetVectorX(), ciStarStart);
-			poMediumStar[i].pSpeed.a_SetVector(0,0);
+			poMediumStar[i].Create(poMediumStar[i].GetSprite(), rand()% ciSCREEN_X , ciStartPos - rand() % ciStarYSpread, 0, cfStarSpeed * 2, ciMediumStarDimensions, ciMediumStarDimensions, 0);
 
 		}
 
-		if(poLargeStar[i].pSpeed.a_fGetVectorY() == 0){
+		if(poLargeStar[i].pSpeed.GetVectorY() == 0){
 
-			poLargeStar[i].pPosition.a_SetVector(rand()% ciSCREEN_X , ciStarStart - rand() % ciStarYSpread);
-			poLargeStar[i].pSpeed.a_SetVector(0, cfStarSpeed * 4);
+			poLargeStar[i].Create(poLargeStar[i].GetSprite(), rand()% ciSCREEN_X , ciStartPos - rand() % ciStarYSpread, 0, cfStarSpeed * 4, ciLargeStarDimensions, ciLargeStarDimensions, 0);
+
 
 		}
-		
-		if(a_iTestScreenCollision(poLargeStar[i]) == ciBottomCollision){
-
-			poLargeStar[i].pPosition.a_SetVector(poLargeStar[i].pPosition.a_fGetVectorX(), ciStarStart);
-			poLargeStar[i].pSpeed.a_SetVector(0,0);
-
-		}
-
-
-		a_UpdateObject(poSmallStar[i]);
-		MoveSprite(poSmallStar[i].iSprite, poSmallStar[i].pPosition.a_fGetVectorX(), poSmallStar[i].pPosition.a_fGetVectorY());
-
-		a_UpdateObject(poMediumStar[i]);
-		MoveSprite(poMediumStar[i].iSprite, poMediumStar[i].pPosition.a_fGetVectorX(), poMediumStar[i].pPosition.a_fGetVectorY());
-
-		a_UpdateObject(poLargeStar[i]);
-		MoveSprite(poLargeStar[i].iSprite, poLargeStar[i].pPosition.a_fGetVectorX(), poLargeStar[i].pPosition.a_fGetVectorY());
 
 	}
-
-}
-
-//////////////////////////////////////////////////////////////////////////
-//		Tests to see if an object is colliding with screen, 1 is left, 2 is right, 3 is up, 4 bottom
-//////////////////////////////////////////////////////////////////////////
-int a_iTestScreenCollision(oObjects & rpObj){
-
-	// 1 is left, 2 is right, 3 is up, 4 bottom
-	if((rpObj.pPosition.a_fGetVectorX() - (rpObj.iWidth / 2) ) < 0)
-		return ciLeftCollision;
-	if((rpObj.pPosition.a_fGetVectorX() + (rpObj.iWidth / 2)) > ciSCREEN_X)
-		return ciRightCollision;
-	if((rpObj.pPosition.a_fGetVectorY() - (rpObj.iHeight / 2)) < 0)
-		return ciTopCollision;
-	if((rpObj.pPosition.a_fGetVectorY() + (rpObj.iHeight / 2)) > (ciSCREEN_Y - rpObj.pSpeed.a_fGetVectorY()))
-		return ciBottomCollision;
 	
-	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Where the game happens
 //////////////////////////////////////////////////////////////////////////
-void a_UpDateGame(){
+void UpDateGame(){
 
-	a_MovePlayer();
+	MovePlayer();
 
-	a_StarMover();
-	
-	ptSineTimer.a_Running();
+	StarMover();
 
-	if(ptSineTimer.a_bStop())
-		ptSineTimer.a_Reset();
+	//Spawns an enemy if the timer reaches its end time
+	ptSmallEnemySpawn.Running();
+	if(ptSmallEnemySpawn.Stop()){
 
-	a_MoveBullets();
+		SpawnEnemy();
 
-	a_UpdateObject(psPlayerOne.poData);
-	MoveSprite(psPlayerOne.poData.iSprite, psPlayerOne.poData.pPosition.a_fGetVectorX(), psPlayerOne.poData.pPosition.a_fGetVectorY());
+	}
 
-	psPlayerOne.ptFireRateCenter.a_Running();
-	psPlayerOne.ptFireRateCenter.a_bStop();
+	MoveEnemy();
 
-	psPlayerOne.ptFireRateOne.a_Running();
-	psPlayerOne.ptFireRateOne.a_bStop();
+	BulletCollision();
 
-	psPlayerOne.ptFireRateTwo.a_Running();
-	psPlayerOne.ptFireRateTwo.a_bStop();
-
-	psPlayerOne.ptFireRateThree.a_Running();
-	psPlayerOne.ptFireRateThree.a_bStop();
-
-	psPlayerOne.ptFireRateFour.a_Running();
-	psPlayerOne.ptFireRateFour.a_bStop();
-
-	a_DrawGame();
+	DrawGame();
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Draws the game sprites  
 //////////////////////////////////////////////////////////////////////////
-void a_DrawGame(){
+void DrawGame(){
 
-	DrawSprite(uiBackgroundImage);
-	DrawSprite(uiLevelBackground);
+	//drawing the background and the level background
+	poBackground.Draw(false, false);
+	poLevel.Draw(false, false);
 
+	//drawing the stars
 	for(int i = 0; i < ciStarArraySize; i++){
 
-		DrawSprite(poSmallStar[i].iSprite);
-		DrawSprite(poMediumStar[i].iSprite);
-		DrawSprite(poLargeStar[i].iSprite);
+		poSmallStar[i].Draw(false, true);
+		poMediumStar[i].Draw(false, true);
+		poLargeStar[i].Draw(false, true);
 
 	}
 
-	for(int i = 0; i < 100; i++){
+	//drawing the enemies
+	for(int i = 0; i < ciEnemyNumbers; i++){
 
-		if(!poPlayerBullets[i].bIsDead){
-			DrawSprite(poPlayerBullets[i].iSprite);
-		}
+		poSmallEnemies[i].Draw(false, true);
 
 	}
 
-	DrawSprite(psPlayerOne.poData.iSprite);
+	//drawing the bullets
+	for(int i = 0; i < ciArraySize; i++){
+
+		poPlayerBullets[i].Draw(false, false);
+		poEnemyBullets[i].Draw(false, false);
+
+	}
+
+	//the player
+	pPlayer.Draw();
+
+	//drawing the score
+	char cPrintScore[20] = {'\n'};
+	sprintf_s(cPrintScore, "Score:  %d", pPlayer.GetScore());
+	DrawString(cPrintScore, 1000, 50, SColour(0,0,0,255));
+
 }
 
 //////////////////////////////////////////////////////////////////////////
-//		fires a bullet
+//		fires a bullet, desen't need to be a bool but its a fail safe to keep multiple bullets from firing
 //////////////////////////////////////////////////////////////////////////
-void a_FireBullet(oShips & rpObj, oVector & rpPositionOne, oVector & rpPositionTwo, oVector & rpPositionThree, oVector & rpPositionFour, bool bIsPlayer){
-
-	int iArrayCounter = 0;
-
-	//first we check to see if the fire positions are valid and make sure eah spot fires once(0,0 is not valid
-	//as the center is already a fire spot)
-	bool bFireOne = !(rpPositionOne.a_fGetVectorX() == 0 && rpPositionOne.a_fGetVectorY() == 0);
-	bool bFireTwo = !(rpPositionTwo.a_fGetVectorX() == 0 && rpPositionTwo.a_fGetVectorY() == 0);
-	bool bFireThree = !(rpPositionThree.a_fGetVectorX() == 0 && rpPositionThree.a_fGetVectorY() == 0);
-	bool bFireFour = !(rpPositionFour.a_fGetVectorX() == 0 && rpPositionFour.a_fGetVectorY() == 0);
-	bool bCenterFire = rpObj.bCenterFire;
-
-	// for firing more then one bullet
-	int iFireCounter = 0;
+bool FireBullet(oObjects & rpObj, bool bIsPlayer){
 
 	for(int i = 0; i < ciArraySize; i++){
 		
+		//if it is not the player firing, then use enemy bullets
 		if(!bIsPlayer){
 
-			if(poEnemyBullets[i].bIsDead){
+			if(!poEnemyBullets[i].GetAlive() && rpObj.ptFireRate.Stop()){
 
-				poEnemyBullets[i].bIsDead = 0;
-				poEnemyBullets[i].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX(), rpObj.poData.pPosition.a_fGetVectorY());
-				poEnemyBullets[i].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
+				rpObj.ptFireRate.Reset();
 
+				//fires two based of of the firing positions
+				poEnemyBullets[i].Create(poEnemyBullets[i].GetSprite(), rpObj.pPosition.GetVectorX() + iSmallEnemyFirePosOne[0],
+												rpObj.pPosition.GetVectorY() + iSmallEnemyFirePosOne[1], 0, cfBulletSpeed, ciBulletDimensions, ciBulletDimensions, 0);
+
+				poEnemyBullets[i+1].Create(poEnemyBullets[i+1].GetSprite(), rpObj.pPosition.GetVectorX() + iSmallEnemyFirePosOne[2],
+												rpObj.pPosition.GetVectorY() + iSmallEnemyFirePosOne[3], 0, cfBulletSpeed, ciBulletDimensions, ciBulletDimensions, 0);
+
+				return 0;
 			}
 
 		}
 
+		//otherwise fire the player bullets
 		else{
 
-			if(poPlayerBullets[i/5].bIsDead && bCenterFire && rpObj.ptFireRateCenter.a_bStop()){
+			if(!poPlayerBullets[i].GetAlive()&& rpObj.ptFireRate.Stop()){
 
-				rpObj.ptFireRateCenter.a_Reset();
-				poPlayerBullets[i/5].bIsDead = 0;
-				bCenterFire = false;
-				poPlayerBullets[i/5].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX(), rpObj.poData.pPosition.a_fGetVectorY());
-				poPlayerBullets[i/5].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
-
-			}
-
-			if(poPlayerBullets[i/5].bIsDead && bFireOne && rpObj.ptFireRateOne.a_bStop()){
-
-				rpObj.ptFireRateOne.a_Reset();
-				poPlayerBullets[i/5].bIsDead = 0;
-				bFireOne = false;
-				poPlayerBullets[i/5].empMove = CircleSparse;
+				rpObj.ptFireRate.Reset();
 				
-				poPlayerBullets[i/5].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX() + rpObj.pvFirePositionOne.a_fGetVectorX(),
-					rpObj.poData.pPosition.a_fGetVectorY() + rpObj.pvFirePositionOne.a_fGetVectorY());
-				poPlayerBullets[i/5].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
+				//fires two based on players fire positions
+				poPlayerBullets[i].Create(poPlayerBullets[i].GetSprite(), rpObj.pPosition.GetVectorX() + iPlayerFirePositions[0],
+												rpObj.pPosition.GetVectorY() + iPlayerFirePositions[1], 0, cfBulletSpeed * -1, ciBulletDimensions, ciBulletDimensions, 0);
 
+				poPlayerBullets[i+1].Create(poPlayerBullets[i+1].GetSprite(), rpObj.pPosition.GetVectorX() + iPlayerFirePositions[2],
+												rpObj.pPosition.GetVectorY() + iPlayerFirePositions[3], 0, cfBulletSpeed * -1, ciBulletDimensions, ciBulletDimensions, 0);
+				return 0;
 			}
 
-			if(poPlayerBullets[i/5].bIsDead && bFireTwo && rpObj.ptFireRateTwo.a_bStop()){
-					
-				rpObj.ptFireRateTwo.a_Reset();
-				poPlayerBullets[i/5].bIsDead = 0;
-				bFireTwo = false;
-				poPlayerBullets[i/5].empMove = SineShotMid;
-				poPlayerBullets[i/5].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX() + rpObj.pvFirePositionTwo.a_fGetVectorX(),
-					rpObj.poData.pPosition.a_fGetVectorY() + rpObj.pvFirePositionTwo.a_fGetVectorY());
-				poPlayerBullets[i/5].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
-
-			}
-
-			if(poPlayerBullets[i/5].bIsDead && bFireThree && rpObj.ptFireRateThree.a_bStop()){
-
-				rpObj.ptFireRateThree.a_Reset();
-				poPlayerBullets[i/5].bIsDead = 0;
-				bFireThree = false;
-				poPlayerBullets[i/5].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX() + rpObj.pvFirePositionThree.a_fGetVectorX(), 
-					rpObj.poData.pPosition.a_fGetVectorY() + rpObj.pvFirePositionThree.a_fGetVectorY());
-				poPlayerBullets[i/5].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
-
-			}
-
-			if(poPlayerBullets[i/5].bIsDead && bFireFour && rpObj.ptFireRateFour.a_bStop()){
-
-				rpObj.ptFireRateFour.a_Reset();
-				poPlayerBullets[i/5].bIsDead = 0;
-				bFireFour = false;
-				poPlayerBullets[i/5].pPosition.a_SetVector(rpObj.poData.pPosition.a_fGetVectorX() + rpObj.pvFirePositionFour.a_fGetVectorX(), 
-					rpObj.poData.pPosition.a_fGetVectorY() + rpObj.pvFirePositionFour.a_fGetVectorY());
-				poPlayerBullets[i/5].pSpeed.a_SetVector(0, cfBulletSpeed * -1);
-
-			}
 		}
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-//		moves the bullets, and destroys them  
-//////////////////////////////////////////////////////////////////////////
-void a_MoveBullets(){
-
-	long double ldSineWave = ptSineTimer.a_ulGetTime() / 10;
-
-	for(int i = 0; i < ciArraySize; i++){
-
-		if(!poPlayerBullets[i/5].bIsDead){
-			if(poPlayerBullets[i/5].empMove == SineShotMid){
-				poPlayerBullets[i/5].pPosition.a_SetVector(poPlayerBullets[i/5].pPosition.a_fGetVectorX() + sin(ldSineWave), poPlayerBullets[i/5].pPosition.a_fGetVectorY());
-			}
-			a_UpdateObject(poPlayerBullets[i/5]);
-			MoveSprite(poPlayerBullets[i/5].iSprite, poPlayerBullets[i/5].pPosition.a_fGetVectorX(), poPlayerBullets[i/5].pPosition.a_fGetVectorY());
-		}
-
-		if(a_iTestScreenCollision(poPlayerBullets[i/5]) != 0 && !poPlayerBullets[i].bIsDead){
-
-			poPlayerBullets[i/5].bIsDead = 1;
-			poPlayerBullets[i/5].pSpeed.a_SetVector(0,0);
-		}
-	}
-
-
+	return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		moves the enemies according to their movement type, and destroys them  
 //////////////////////////////////////////////////////////////////////////
-void a_MoveEnemy(){
+void MoveEnemy(){
+
+	for(int i = 0; i < ciEnemyNumbers; i++){
+
+		if(poSmallEnemies[i].GetAlive()){
+
+			RotateEnemy(poSmallEnemies[i]);
+
+			//destroy time is unused
+			poSmallEnemies[i].ptDestroyTime.Running();
+			poSmallEnemies[i].ptDestroyTime.Stop();
+
+			poSmallEnemies[i].ptTimeToFire.Running();
+			poSmallEnemies[i].ptFireRate.Running();
+
+			if(poSmallEnemies[i].ptTimeToFire.Stop() && poSmallEnemies[i].ptFireRate.Stop()){
+
+				//FireBullet(poSmallEnemies[i], false);
+
+			}
+		}
+
+	}
 
 
 }
 
 //////////////////////////////////////////////////////////////////////////
-//		spawns enemies in various ways, gives them their type, and thier sprite  
+//		spawns enemies and resets spawn timer  
 //////////////////////////////////////////////////////////////////////////
-void a_SpawnEnemy(){
+void SpawnEnemy(){
 
+	//making sure only one enemy is spawned
+	bool bEnemySpawned = false;
 
+	for(int i = 0; i < ciEnemyNumbers; i++){
+
+		if(bEnemySpawned == false && !poSmallEnemies[i].GetAlive()){
+
+			/*poSmallEnemies[i].Create(poSmallEnemies[i].GetSprite(), rand() % ciSCREEN_X, 0 - rand()% ciSCREEN_Y + ciEnemyStartPosition, 0, 
+										cfSmallEnemyBasicSpeed, ciSmallEnemyDimensions, ciSmallEnemyDimensions, ulEnemyFireRate);*/
+
+			poSmallEnemies[i].Create(poSmallEnemies[i].GetSprite(), rand() % ciSCREEN_X, 390, 0, 
+										0, ciSmallEnemyDimensions, ciSmallEnemyDimensions, ulEnemyFireRate);
+
+			bEnemySpawned = true;
+
+			ptSmallEnemySpawn.Reset();
+
+		}
+
+	}
+
+}
+
+void RotateEnemy(oObjects & rpObj){
+
+	RotateSprite(rpObj.GetSprite(), rpObj.pPosition.GetAngle(pPlayer.pPosition));
+
+}
+
+//////////////////////////////////////////////////////////////////////////
+//		Checks for collision between players and enemies bullets
+//////////////////////////////////////////////////////////////////////////
+void BulletCollision(){
+
+	for(int i = 0; i < ciArraySize; i++){
+
+		if(poPlayerBullets[i].GetAlive()){
+
+			for(int j = 0; j < ciEnemyNumbers; j++){
+
+				//check if an enemy has been hit by a player bullet, and kill it and increase score if true
+				if(poSmallEnemies[j].GetAlive() && poPlayerBullets[i].GetAlive() && poSmallEnemies[j].TestCollision(poPlayerBullets[i])){
+
+					poSmallEnemies[j].Kill();
+					poPlayerBullets[i].Kill();
+					pPlayer.IncreaseScore();
+
+				}
+
+			}
+
+		}
+
+		//check if an enemy bullet has hit the player, and kill it and go to the game over screen if true
+		/*if(poEnemyBullets[i].GetAlive() && poEnemyBullets[i].TestCollision(pPlayer)){
+			
+			poEnemyBullets[i].Kill();
+			pPlayer.Kill();
+			poMenu.SetSprite(uiGameOver);
+			GameState = &Menu;
+
+		}*/
+
+	}
 
 }
