@@ -105,22 +105,18 @@
   <ItemGroup>
     <ClCompile Include="source\Functions.cpp" />
     <ClCompile Include="source\Main.cpp" />
-    <ClCompile Include="source\Mathmatics.cpp" />
     <ClCompile Include="source\Objects.cpp" />
-    <ClCompile Include="source\PlayerClass.cpp" />
-    <ClCompile Include="source\Sprite.cpp" />
+    <ClCompile Include="source\Ships.cpp" />
     <ClCompile Include="source\Timer.cpp" />
+    <ClCompile Include="source\Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\Functions.h" />
-    <ClInclude Include="include\Globals.h" />
-    <ClInclude Include="include\Mathmatics.h" />
     <ClInclude Include="include\Objects.h" />
-    <ClInclude Include="include\OtherGlobals.h" />
-    <ClInclude Include="include\PlayerClass.h" />
-    <ClInclude Include="include\Sprite.h" />
+    <ClInclude Include="include\Ships.h" />
     <ClInclude Include="include\Timer.h" />
+    <ClInclude Include="include\Vector2D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

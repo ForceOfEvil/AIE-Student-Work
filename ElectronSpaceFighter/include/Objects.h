@@ -8,8 +8,49 @@
 #ifndef _OBJECTS_H_
 #define _OBJECTS_H_
 
-#include "Timer.h"
-#include "Mathmatics.h"
+#include "Vector2D.h"
+
+typedef enum teMovementPatterns
+{
+
+	//Type One (used by small and smaller medium enemies)
+	DiagionalIntro = 1,
+	QuickSineY = 2,
+	QuickSineX = 3,
+	StayInFront = 4,
+
+	//Type Two (used by medium and large enemies)
+	BackIntroAndFlip = 5,
+	//Down, Stay, Shoot, then go
+	DSSG = 6,
+	GetInFront = 7,
+	SideApperence = 8,
+
+	//Boss MoveTypes
+	FloatAround = 9,
+	TargetPlayer = 10,
+	MoveToSpot = 11,
+	AngryMove = 12,
+
+	//Bullet Movement Types
+
+	//Straight Shots (ammount of bullets per shot)
+	StraightOne = 13,
+	StraightTwo = 14,
+	StraightThree = 15,
+	StraightFour = 16,
+
+	//Sine Shots (sine amplitude)
+	SineShotSmall = 17,
+	SineShotMid = 18,
+	SineShotLarge = 19,
+
+	//Circle Shots
+	CircleSparse = 20,
+	CircleHoled = 21,
+	CircleTight = 22
+
+};
 
 class oObjects
 {
@@ -17,46 +58,27 @@ class oObjects
 public:
 
 	oObjects();
-
-	oVector2 pPosition;
-	oVector2 pSpeed;
-	oTimer ptFireRate;
-	oTimer ptTimeToFire;
-	oTimer ptDestroyTime;
-
-	void oObjects::Inisialize(unsigned int a_uiSprite, float a_fStartPosX, float a_fStartPosY, int a_iWidth, int a_iHeight, bool a_bAlive);
-	void oObjects::Draw(bool a_bIsPlayer, bool a_bIsStar);
-
-	void oObjects::SetSprite(unsigned int a_uiSprite);
-	unsigned int oObjects::GetSprite();
-
-	bool oObjects::GetAlive();
-
-	void oObjects::IncreaseScore();
-	int oObjects::GetScore();
-
-	void oObjects::SetDimensions(int a_iWidth, int a_iHeight);
-	int oObjects::GetWidth();
-	int oObjects::GetHeight();
-
-	int oObjects::TestScreenCollision();
-	bool oObjects::TestCollision(oObjects & rpObj);
-
-	void oObjects::Kill();
-
-	void oObjects::Create(unsigned int a_uiSprite, float a_fPosX, float a_fPosY, float a_fSpeedX, float a_fSpeedY, int a_iWidth, int a_iHeight, unsigned long a_ulFireRate);
-	
+	oVector pPosition;
+	oVector pSpeed;
+	void oObjects::a_Update();
+	void oObjects::a_Inisialize(unsigned int uiSetSprite, int iStartPosX, int iStartPosY, int iWide, int iTall);
+	void oObjects::a_Draw();
+	void oObjects::a_SetSprite(unsigned int uiNewSprite);
+	void oObjects::a_SetDimensions(int iX, int iY);
+	void oObjects::a_SetMovement(teMovementPatterns & rempMove);
+	teMovementPatterns oObjects::a_GetMovement();
+	void oObjects::a_Kill();
+	void oObjects::a_Create(float fPosX, float fPosY, float fSpeedX, float fSpeedY, unsigned int uiNewSprite);
 	~oObjects();
 
 
 private:
 
-	unsigned int m_uiSprite;
-	int m_iWidth;
-	int m_iHeight;
-	bool m_bAlive;
-	int m_iScore;
-
+	unsigned int uiSprite;
+	int iWidth;
+	int iHeight;
+	bool bAlive;
+	teMovementPatterns empMove;
 
 };
 

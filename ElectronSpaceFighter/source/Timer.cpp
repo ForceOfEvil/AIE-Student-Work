@@ -14,29 +14,29 @@
 //////////////////////////////////////////////////////////////////////////
 oTimer::oTimer(){
 
-	m_bRunning = 0;
-	m_ulEndTime = 0;
-	m_ulTime = 0;
+	bRunning = 0;
+	ulEndTime = 0;
+	ulTime = 0;
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Starts a timer with an end time
 //////////////////////////////////////////////////////////////////////////
-void oTimer::Start(unsigned long a_ulEndTime){
+void oTimer::a_Start(unsigned long ulRunTime){
 
-	m_bRunning = 1;
-	m_ulEndTime = a_ulEndTime;
+	bRunning = 1;
+	ulEndTime = ulRunTime;
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		Stops a timer (needed seperate from reset for bosses and levels)
 //////////////////////////////////////////////////////////////////////////
-bool oTimer::Stop(){
+bool oTimer::a_bStop(){
 
-	if(m_ulTime >= m_ulEndTime){
-		m_bRunning = 0;
+	if(ulTime == ulEndTime){
+		bRunning = 0;
 		return 1;
 	}
 
@@ -47,26 +47,26 @@ bool oTimer::Stop(){
 //////////////////////////////////////////////////////////////////////////
 //		Resets a timer so it begins again
 //////////////////////////////////////////////////////////////////////////
-void oTimer::Reset(){
+void oTimer::a_Reset(){
 
-	m_bRunning = 1;
-	m_ulTime = 0;
+	bRunning = 1;
+	ulTime = 0;
 
 }
 
 //////////////////////////////////////////////////////////////////////////
 //		returns the time (for scripted events)
 //////////////////////////////////////////////////////////////////////////
-unsigned long oTimer::GetTime(){
+unsigned long oTimer::a_ulGetTime(){
 
-	return m_ulTime;
+	return ulTime;
 
 }
 
-void oTimer::Running(){
+void oTimer::a_Running(){
 
-	if(m_bRunning == 1)
-		m_ulTime++;
+	if(bRunning == 1)
+		ulTime++;
 
 }
 

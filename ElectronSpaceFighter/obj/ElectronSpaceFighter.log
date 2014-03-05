@@ -1,80 +1,47 @@
-﻿Build started 11/19/2013 3:12:17 PM.
+﻿Build started 10/15/2013 10:19:10 AM.
      1>Project "F:\AIE\ElectronSpaceFighter\ElectronSpaceFighter.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "obj\ElectronSpaceFighter.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I./ /I./include/ /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"obj\\" /Fd"obj\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt source\Functions.cpp source\Main.cpp source\Mathmatics.cpp source\Objects.cpp source\PlayerClass.cpp source\Sprite.cpp
-         Mathmatics.cpp
-     1>f:\aie\electronspacefighter\source\mathmatics.cpp(67): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\mathmatics.cpp(67): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\mathmatics.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\mathmatics.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\mathmatics.cpp(199): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-         Generating Code...
-         Compiling...
-         Sprite.cpp
-     1>f:\aie\electronspacefighter\source\sprite.cpp(18): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\sprite.cpp(18): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\sprite.cpp(147): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\sprite.cpp(147): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-         PlayerClass.cpp
-         Objects.cpp
-     1>f:\aie\electronspacefighter\source\objects.cpp(179): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\objects.cpp(179): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
-         Main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I./ /I./include/ /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"obj\\" /Fd"obj\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt source\Functions.cpp
          Functions.cpp
-     1>f:\aie\electronspacefighter\include\otherglobals.h(36): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>f:\aie\electronspacefighter\source\functions.cpp(29): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(36): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(36): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(43): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(43): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(47): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(47): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(55): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(55): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(58): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(58): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(65): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(65): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(68): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(68): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(71): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(71): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(100): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(107): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(107): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(114): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(114): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(118): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(118): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(52): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>f:\aie\electronspacefighter\source\functions.cpp(122): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(124): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(124): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(125): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(125): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
      1>f:\aie\electronspacefighter\source\functions.cpp(126): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
      1>f:\aie\electronspacefighter\source\functions.cpp(126): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(129): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(129): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(136): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(136): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(139): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(139): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(142): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(142): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(276): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(276): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(282): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(282): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(288): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(288): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(458): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
-     1>f:\aie\electronspacefighter\source\functions.cpp(472): warning C4244: 'argument' : conversion from 'double' to 'float', possible loss of data
-         Generating Code...
+     1>f:\aie\electronspacefighter\source\functions.cpp(127): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(127): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(144): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(144): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(154): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(154): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(164): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(164): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(195): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(195): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(201): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(201): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(207): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(207): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(321): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(321): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(328): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(335): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(335): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(342): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(349): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(349): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(356): warning C4244: 'argument' : conversion from 'const int' to 'float', possible loss of data
+     1>f:\aie\electronspacefighter\source\functions.cpp(563): warning C4244: 'argument' : conversion from 'long double' to 'float', possible loss of data
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"bin\ElectronSpaceFighter_d.exe" /INCREMENTAL /NOLOGO /LIBPATH:./libs AIE_GL_Static_Framework_d.lib kernel32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"obj\ElectronSpaceFighter_d.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"bin\ElectronSpaceFighter_d.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"bin\ElectronSpaceFighter_d.lib" /MACHINE:X86 obj\Functions.obj
          obj\Main.obj
-         obj\Mathmatics.obj
-         obj\Objects.obj
-         obj\PlayerClass.obj
-         obj\Sprite.obj
          obj\Timer.obj
+         obj\Vector2D.obj
          ElectronSpaceFighter.vcxproj -> F:\AIE\ElectronSpaceFighter\bin\ElectronSpaceFighter_d.exe
        Manifest:
          C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"F:\AIE\ElectronSpaceFighter\bin\ElectronSpaceFighter_d.exe.manifest" /manifest obj\ElectronSpaceFighter_d.exe.intermediate.manifest
@@ -85,4 +52,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.90
+Time Elapsed 00:00:03.13
